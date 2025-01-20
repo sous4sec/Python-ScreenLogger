@@ -4,16 +4,16 @@ Um **ScreenLogger simples** feito em **Python** que envia **Capturas de Tela** p
 
 ## 📚 Sobre
 
-Este projeto foi criado para um trabalho escolar e baseado em outros projetos open-source encontrados no GitHub. Foi feito inteiramente para fins educacionais.
+Este projeto foi criado para um trabalho escolar e é baseado em outros projetos open-source encontrados no GitHub. Foi desenvolvido inteiramente para fins educacionais.
 
 ## 🔧 Funcionalidades
 
-- **Envio de Capturas de Tela por E-mail**: Capture e envie capturas de tela do seu PC, junto com informações como **Hostname, Sistema, Usuário e IP**.
-- **Configurações Personalizáveis**: Altere facilmente o número de capturas por e-mail e o tempo de intervalo entre as capturas.
+- **Envio de Capturas de Tela por E-mail**: Captura e envia capturas de tela do seu PC, junto com informações como **Hostname, Sistema, Usuário e IP**.
+- **Configurações Personalizáveis**: Agora, as variáveis ajustáveis são carregadas de um arquivo `.env`, facilitando a personalização.
 - **Integração com o Início Automático**: Ao ser convertido em um **executável**, o programa será automaticamente copiado para a **pasta de Inicialização** do Windows.
-  
+
 ## 🛠️ **Principais Funções**
-<img src="https://github.com/user-attachments/assets/54deb6db-15dd-4f27-bb21-49e410000769" />
+![Principais Funções](https://github.com/user-attachments/assets/54deb6db-15dd-4f27-bb21-49e410000769)
 
 - ✅ **Captura de Capturas de Tela**
 - ✅ **Recuperação de Hostname**
@@ -23,8 +23,24 @@ Este projeto foi criado para um trabalho escolar e baseado em outros projetos op
 
 ## ⚙️ **Configurações Padrão**
 
-- `count = 20`: Número de capturas por e-mail (padrão: 20 capturas).
-- `time.sleep(1)`: Tempo de intervalo entre cada captura (padrão: 1 segundo).
+As configurações agora são carregadas a partir de um arquivo `.env`. Exemplos de variáveis que podem ser ajustadas:
+
+- `EMAIL_SENDER`: Endereço de e-mail do remetente.
+- `EMAIL_RECEIVER`: Endereço de e-mail do destinatário.
+- `EMAIL_PASSWORD`: Senha do aplicativo para o e-mail.
+- `IMAGES_DIR`: Diretório onde as capturas de tela serão salvas.
+- `SMTP_SERVER`: Servidor SMTP para envio de e-mails.
+- `SMTP_PORT`: Porta do servidor SMTP.
+
+Exemplo de conteúdo do arquivo `.env`:
+```env
+EMAIL_SENDER=emailsender@example.com
+EMAIL_RECEIVER=emailreceiver@example.com
+EMAIL_PASSWORD=yourapppassword
+IMAGES_DIR=C:\IMAGES
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
+```
 
 ## 🛡️ **Testes de Antivírus**
 
@@ -35,8 +51,9 @@ Este projeto foi criado para um trabalho escolar e baseado em outros projetos op
 
 Caso queira rodar o **ScreenLogger** como um arquivo executável, utilize a biblioteca [AutoPyToExe](https://pypi.org/project/auto-py-to-exe/).
 
-Após obter o arquivo **.exe**, altere a variável `(originalfilename)` para o nome do seu arquivo executável. Isso, juntamente com outras modificações, como a variável `(copiedfilename)`, garantirá que o arquivo seja copiado para a **pasta de Inicialização** do Windows, fazendo com que ele seja executado na inicialização.
+Após obter o arquivo **.exe**, certifique-se de que o nome do arquivo está correto no seu script, e que o arquivo será copiado para a **pasta de Inicialização** do Windows, garantindo a execução na inicialização.
 
 ## 👨‍💻 **Créditos**
 
 Este projeto é baseado em contribuições de outros projetos open-source. Se você for o criador original de algum código utilizado, entre em contato para o devido reconhecimento.
+
