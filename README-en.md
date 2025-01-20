@@ -4,16 +4,16 @@ A **Simple ScreenLogger** built with **Python** that sends **Screenshots** to yo
 
 ## 📚 About
 
-This project was created for a school assignment and is based on other open-source projects found on GitHub. It was made entirely for educational purposes.
+This project was created for a school assignment and is based on other open-source projects found on GitHub. It was developed entirely for educational purposes.
 
 ## 🔧 Features
 
 - **Send Screenshots via Email**: Capture and send screenshots of your PC, along with **Hostname, System, User, and IP** information.
-- **Customizable Settings**: Easily change the number of screenshots in each email and the delay between screenshots.
-- **Auto Startup**: Once converted into an **executable**, the program will automatically add itself to the **Startup folder** of Windows.
-  
+- **Customizable Settings**: Adjustable variables are now loaded from a `.env` file, making customization easier.
+- **Auto Startup Integration**: Once converted into an **executable**, the program will automatically add itself to the **Startup folder** of Windows.
+
 ## 🛠️ **Main Functions**
-<img src="https://github.com/user-attachments/assets/54deb6db-15dd-4f27-bb21-49e410000769" />
+![Main Functions](https://github.com/user-attachments/assets/54deb6db-15dd-4f27-bb21-49e410000769)
 
 - ✅ **Screenshot Capture**
 - ✅ **Hostname Retrieval**
@@ -23,8 +23,24 @@ This project was created for a school assignment and is based on other open-sour
 
 ## ⚙️ **Default Settings**
 
-- `count = 20`: Number of screenshots in each email (default: 20 screenshots).
-- `time.sleep(1)`: Time delay between each screenshot (default: 1 second).
+Settings are now loaded from a `.env` file. Examples of adjustable variables include:
+
+- `EMAIL_SENDER`: Sender email address.
+- `EMAIL_RECEIVER`: Receiver email address.
+- `EMAIL_PASSWORD`: App password for the email.
+- `IMAGES_DIR`: Directory where screenshots will be saved.
+- `SMTP_SERVER`: SMTP server for sending emails.
+- `SMTP_PORT`: Port for the SMTP server.
+
+Example of `.env` file content:
+```env
+EMAIL_SENDER=emailsender@example.com
+EMAIL_RECEIVER=emailreceiver@example.com
+EMAIL_PASSWORD=yourapppassword
+IMAGES_DIR=C:\IMAGES
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
+```
 
 ## 🛡️ **AntiVirus Tests**
 
@@ -35,8 +51,9 @@ This project was created for a school assignment and is based on other open-sour
 
 If you want to run **ScreenLogger** as an executable, you can use the library [AutoPyToExe](https://pypi.org/project/auto-py-to-exe/).
 
-Once you have the **.exe file**, you will need to modify the variable `(originalfilename)` with the name of your executable. This, along with other changes like `(copiedfilename)`, will ensure that the executable is copied to the **Startup folder** of Windows, making it run on boot.
+Once you have the **.exe file**, ensure that the file name is correct in your script and that the file will be copied to the **Startup folder** of Windows, guaranteeing execution on boot.
 
 ## 👨‍💻 **Credits**
 
-This project is based on other open-source contributions. If you're the original creator of any used code, please reach out for proper credit.
+This project is based on contributions from other open-source projects. If you're the original creator of any used code, please reach out for proper credit.
+
