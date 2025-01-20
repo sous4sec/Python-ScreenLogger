@@ -1,4 +1,4 @@
-# 👁️ **ScreenLogger** - My First Project
+# 👁️ **ScreenLogger** - PYTHON
 
 A **Simple ScreenLogger** built with **Python** that sends **Screenshots** to your email.
 
