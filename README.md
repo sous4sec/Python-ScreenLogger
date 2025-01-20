@@ -1,5 +1,4 @@
-# 👁️ **ScreenLogger** - Meu Primeiro Projeto
-
+# 👁️ **ScreenLogger** - PYTHON
 Um **ScreenLogger simples** feito em **Python** que envia **Capturas de Tela** para o seu e-mail.
 
 ## 📚 Sobre
